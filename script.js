@@ -76,23 +76,25 @@ async function initializeBrowser() {
             </div>
         </div>`;
 
+    const loading = document.getElementById('loading');
+    const hideLoading = () => {
+        loading.style.display = 'none';
+        loading.setAttribute('aria-hidden', 'true');
+    };
+
     const frame = sharedScramjet.createFrame();
     frame.frame.src = "NT.html";
 
-    frame.frame.addEventListener('load', () => {
-        document.getElementById('loading').style.display = 'none';
-    });
+    frame.frame.addEventListener('load', hideLoading);
 
     frame.addEventListener("urlchange", (e) => {
-        // Keep the address/status text in sync, but don't reopen the startup
-        // overlay for every navigation. Some proxied pages don't emit a later
-        // iframe load event, which otherwise leaves this overlay stuck forever.
+        // Navigation can complete without a subsequent iframe load event in
+        // proxied pages, so don't leave the startup overlay covering the page.
         document.getElementById('loading-url').textContent = e.url;
+        hideLoading();
     });
 
-    document.getElementById('skip-btn').onclick = () => {
-        document.getElementById('loading').style.display = 'none';
-    };
+    document.getElementById('skip-btn').onclick = hideLoading;
 
     document.getElementById("iframe-container").appendChild(frame.frame);
 
@@ -103,7 +105,10 @@ async function initializeBrowser() {
     }
 
     window.addEventListener('message', (e) => {
-        if (e.data?.type === 'navigate') {
+        if (e.data?.type === 'navigate' && typeof e.data.url === 'string') {
+            // Hide immediately: a proxy navigation may not emit iframe.onload
+            // if the destination errors or keeps a long-lived request open.
+            hideLoading();
             frame.go(e.data.url.startsWith('http') ? e.data.url : `https://${e.data.url}`);
         }
     });
