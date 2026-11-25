@@ -20,6 +20,7 @@
     form {
       display: flex;
       width: 100%;
+      gap: 10px;
       padding: 14px 18px;
       border: 1px solid #dddddd;
       border-radius: 12px;
@@ -27,12 +28,24 @@
     }
     input {
       width: 100%;
+      min-width: 0;
       border: 0;
       outline: 0;
       background: transparent;
       color: #111111;
       font: inherit;
     }
+    button {
+      flex: 0 0 auto;
+      padding: 6px 12px;
+      border: 1px solid #dddddd;
+      border-radius: 8px;
+      background: #111111;
+      color: #ffffff;
+      font: inherit;
+      cursor: pointer;
+    }
+    button:hover { background: #333333; }
   </style>
 </head>
 <body>
@@ -40,6 +53,7 @@
     <h1>Search</h1>
     <form id="searchForm">
       <input id="searchInput" type="text" placeholder="Search the web..." autocomplete="off" autofocus>
+      <button type="submit">Enter</button>
     </form>
   </main>
   <script>
