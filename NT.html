@@ -53,19 +53,27 @@
     <h1>Search</h1>
     <form id="searchForm">
       <input id="searchInput" type="text" placeholder="Search the web..." autocomplete="off" autofocus>
-      <button type="submit">Enter</button>
+      <button id="searchButton" type="button">Enter</button>
     </form>
   </main>
   <script>
-    document.getElementById('searchForm').addEventListener('submit', event => {
+    const form = document.getElementById('searchForm');
+    const input = document.getElementById('searchInput');
+
+    function submitSearch() {
+      const query = input.value.trim();
+      if (!query) return;
+
+      window.parent.postMessage({
+        type: 'navigate',
+        url: 'https://search.brave.com/search?q=' + encodeURIComponent(query)
+      }, '*');
+    }
+
+    document.getElementById('searchButton').addEventListener('click', submitSearch);
+    form.addEventListener('submit', event => {
       event.preventDefault();
-      const query = document.getElementById('searchInput').value.trim();
-      if (query) {
-        window.parent.postMessage({
-          type: 'navigate',
-          url: 'https://search.brave.com/search?q=' + encodeURIComponent(query)
-        }, '*');
-      }
+      submitSearch();
     });
   </script>
 </body>
