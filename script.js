@@ -84,7 +84,9 @@ async function initializeBrowser() {
     });
 
     frame.addEventListener("urlchange", (e) => {
-        document.getElementById('loading').style.display = 'flex';
+        // Keep the address/status text in sync, but don't reopen the startup
+        // overlay for every navigation. Some proxied pages don't emit a later
+        // iframe load event, which otherwise leaves this overlay stuck forever.
         document.getElementById('loading-url').textContent = e.url;
     });
 

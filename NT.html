@@ -44,7 +44,7 @@
   </main>
   <script>
     document.getElementById('searchForm').addEventListener('submit', event => {
-      event.preventEventDefault?.();
+      event.preventDefault();
       const query = document.getElementById('searchInput').value.trim();
       if (query) {
         window.parent.postMessage({
