@@ -106,10 +106,17 @@ async function initializeBrowser() {
 
     window.addEventListener('message', (e) => {
         if (e.data?.type === 'navigate' && typeof e.data.url === 'string') {
+            // Only accept search/navigation requests from our search iframe.
+            if (e.source !== frame.frame.contentWindow) return;
+
             // Hide immediately: a proxy navigation may not emit iframe.onload
             // if the destination errors or keeps a long-lived request open.
             hideLoading();
             frame.go(e.data.url.startsWith('http') ? e.data.url : `https://${e.data.url}`);
+
+            if (typeof e.data.requestId === 'string') {
+                e.source.postMessage({ type: 'navigate-ack', requestId: e.data.requestId }, '*');
+            }
         }
     });
 }
